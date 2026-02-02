@@ -112,6 +112,10 @@ app.delete('/delete-appointment/:id', (req, res)=>{
         });
    });
 });
+app.get('/',(req,res)=>{
+    res.send("API is working fine .");
+    res.end();
+});
 
 app.listen(4040);
 console.log(`Server Started http://127.0.0.1:4040`);
