@@ -2,7 +2,7 @@ const mongoClient = require("mongodb").MongoClient;
 const cors = require("cors");
 const express = require("express");
 
-const conString = "mongodb://127.0.0.1:27017";
+const conString = process.env.MONGO_URI;
 
 const app = express();
 app.use(cors());
