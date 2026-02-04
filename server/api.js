@@ -54,7 +54,7 @@ app.post('/register-user', (req, res)=>{
         var database = clientObj.db("todo");
         database.collection('users').insertOne(user).then(()=>{
               console.log('User Registered');
-              res.end();
+              res.json();
         });
    });
 });
