@@ -15,7 +15,11 @@ app.get('/users/:userid', (req, res)=>{
          database.collection('users').findOne({user_id:req.params.userid}).then(user=>{
 
                 res.send(user);
-                res.end();
+                res.json({
+                    user_id:user.user_id,
+                    user_name:user.user_name,
+                    mobile:user.mobile
+                });
 
          })
     });
