@@ -84,7 +84,7 @@ app.post('/add-appointment', (req, res)=>{
 
 app.put('/edit-appointment/:id', (req, res)=>{
 
-    var id = req.params.id;
+    var id = parseInt(req.params.id);
 
     var appointment = {
         appointment_id : req.body.appointment_id,
@@ -100,6 +100,7 @@ app.put('/edit-appointment/:id', (req, res)=>{
         .then(()=>{
             console.log('Appointment Updated');
             res.json();
+
         });
    });
 });
