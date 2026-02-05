@@ -14,7 +14,7 @@ app.get('/users/:userid', (req, res)=>{
          var database = clientObj.db("todo");
          database.collection('users').findOne({user_id:req.params.userid}).then(user=>{
 
-                res.send(user);
+                // res.send(user);
                 res.json({
                     user_id:user.user_id,
                     user_name:user.user_name,
