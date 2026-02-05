@@ -77,7 +77,7 @@ app.post('/add-appointment', (req, res)=>{
         var database = clientObj.db("todo");
         database.collection('appointments').insertOne(appointment).then(()=>{
               console.log('Appointment Added');
-              res.end();
+              res.json();
         });
    });
 });
@@ -99,7 +99,7 @@ app.put('/edit-appointment/:id', (req, res)=>{
         database.collection('appointments').updateOne({appointment_id:id},{$set:appointment})
         .then(()=>{
             console.log('Appointment Updated');
-            res.end();
+            res.json();
         });
    });
 });
