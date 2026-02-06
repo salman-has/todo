@@ -96,7 +96,7 @@ app.put('/edit-appointment/:id', (req, res)=>{
 
     mongoClient.connect(conString).then(clientObj=>{
         var database = clientObj.db("todo");
-        database.collection('appointments').updateOne({appointment_id:id},{$set:appointment})
+        database.collection('appointments').replaceOne({appointment_id:id},{$set:appointment})
         .then(()=>{
             console.log('Appointment Updated');
             res.json();
