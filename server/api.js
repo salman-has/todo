@@ -87,7 +87,7 @@ app.put('/edit-appointment/:id', (req, res)=>{
     const id = Number(req.params.id);
 
     var appointment = {
-        appointment_id : req.body.appointment_id,
+        appointment_id : Number(req.body.appointment_id),
         title: req.body.title, 
         description: req.body.description, 
         date: new Date(req.body.date),
