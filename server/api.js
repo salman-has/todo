@@ -84,10 +84,10 @@ app.post('/add-appointment', (req, res)=>{
 
 app.put('/edit-appointment/:id', (req, res)=>{
 
-    var id = parseInt(req.params.id);
+    const id = Number(req.params.id);
 
     var appointment = {
-        appointment_id : req.body.appointment_id,
+        // appointment_id : req.body.appointment_id,
         title: req.body.title, 
         description: req.body.description, 
         date: new Date(req.body.date),
@@ -96,7 +96,7 @@ app.put('/edit-appointment/:id', (req, res)=>{
 
     mongoClient.connect(conString).then(clientObj=>{
         var database = clientObj.db("todo");
-        database.collection('appointments').replaceOne({appointment_id:id},{$set:appointment})
+        database.collection('appointments').updateOne({appointment_id:id},{$set:appointment})
         .then(()=>{
             console.log('Appointment Updated');
             res.json();
