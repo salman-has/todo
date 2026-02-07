@@ -112,7 +112,7 @@ app.put('/edit-appointment/:id', (req, res)=>{
 });
 
 app.delete('/delete-appointment/:id', (req, res)=>{
-    var id = parseInt(req.params.id);
+    var id = req.params.id;
 
     mongoClient.connect(conString).then(clientObj=>{
         var database = clientObj.db("todo");
