@@ -189,6 +189,7 @@ $(function(){
             url: `https://todo-backend-ouck.onrender.com/appointment-Details/${e.target.value}`,
             
             success: (appointments=>{
+                console.log(appointments.date);
                 $("#appointment_id").val(appointments.appointment_id);
                
                 $("#title").val(appointments.title);

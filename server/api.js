@@ -41,7 +41,7 @@ app.get('/appointment-Details/:id', (req, res)=>{
          var database = clientObj.db("todo");
          database.collection('appointments').findOne({appointment_id:parseInt(req.params.id)}).then(document=>{
             res.send(document);
-            res.end();
+            res.json();
          });
     });
 });
