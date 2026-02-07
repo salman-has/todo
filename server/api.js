@@ -39,9 +39,9 @@ app.get('/appointments/:userid', (req, res)=>{
 app.get('/appointment-Details/:id', (req, res)=>{
     mongoClient.connect(conString).then(clientObj=>{
          var database = clientObj.db("todo");
-         database.collection('appointments').findOne({appointment_id:parseInt(req.params.id)}).then(document=>{
+         database.collection('appointments').findOne({appointment_id:req.params.id}).then(document=>{
             res.send(document);
-            res.json();
+            res.end();
          });
     });
 });
