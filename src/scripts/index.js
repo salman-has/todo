@@ -107,6 +107,9 @@ $(function(){
             method: 'get',
             url: `https://todo-backend-ouck.onrender.com/users/${user_id}`,
             success: (userDetails)=>{
+               
+               
+                console.log(userDetails);
                  if(userDetails){
                      if($("#password").val()===userDetails.password){
                          $.cookie('userid', $("#user_id").val());
