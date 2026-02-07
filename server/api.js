@@ -57,8 +57,16 @@ app.post('/register-user', (req, res)=>{
     mongoClient.connect(conString).then(clientObj=>{
         var database = clientObj.db("todo");
         database.collection('users').insertOne(user).then(()=>{
-              console.log('User Registered');
-              res.json();
+            //   console.log("BPDY:",req.body);
+              res.json({
+                 message:"user registered successfully"
+              })
+                // res.status(200).json({
+                    
+                // success:true,
+                // message:"user registered successfully",
+                
+            
         });
    });
 });

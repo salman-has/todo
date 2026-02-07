@@ -70,7 +70,9 @@ $(function(){
 
     // Register Button Click - Post Data to Users
 
-     $(document).on("click", "#btnRegister",()=>{
+     $(document).on("click", "#btnRegister",(e)=>{
+        e.preventDefault();
+        alert("clicked");
 
         var user = {
             user_id : $("#user_id").val(),
@@ -81,13 +83,18 @@ $(function(){
 
         $.ajax({
             method: "post",
-            url: `http://127.0.0.1:4040/register-user`,
-            data: user,
-            success:()=>{
-                alert('User Registered');
+            url: `https://todo-backend-ouck.onrender.com/register-user`,
+            contentType:"application/json",
+            dataType:"json",
+            processData:false,
+            data: JSON.stringify(user),
+            success:(res)=>{
+                console.log("loading...");
+                alert("User Registered");
+                LoadPage("user_login.html");
             }
         })
-        LoadPage("user_login.html");
+        
     })
     
     // Login Button - on login page
@@ -98,7 +105,7 @@ $(function(){
 
           $.ajax({
             method: 'get',
-            url: `http://127.0.0.1:4040/users/${user_id}`,
+            url: `https://todo-backend-ouck.onrender.com/users/${user_id}`,
             success: (userDetails)=>{
                  if(userDetails){
                      if($("#password").val()===userDetails.password){
