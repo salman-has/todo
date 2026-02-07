@@ -72,7 +72,7 @@ app.post('/register-user', (req, res)=>{
 app.post('/add-appointment', (req, res)=>{
 
     var appointment = {
-        appointment_id : parseInt(req.body.appointment_id),
+        appointment_id : req.body.appointment_id,
         title: req.body.title, 
         description: req.body.description, 
         date: new Date(req.body.date),
@@ -90,10 +90,10 @@ app.post('/add-appointment', (req, res)=>{
 
 app.put('/edit-appointment/:id', (req, res)=>{
 
-    const id = Number(req.params.id);
+    const id = req.params.id;
 
     var appointment = {
-        appointment_id : Number(req.body.appointment_id),
+        appointment_id : req.body.appointment_id,
         title: req.body.title, 
         description: req.body.description, 
         date: new Date(req.body.date),

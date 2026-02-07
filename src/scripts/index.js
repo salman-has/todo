@@ -10,7 +10,7 @@ function LoadDashboard(){
              $("#lblUser").html($.cookie('userid'));
              $.ajax({
                  method:'get',
-                 url: `http://127.0.0.1:4040/appointments/${$.cookie('userid')}`,
+                 url: `https://todo-backend-ouck.onrender.com/appointments/${$.cookie('userid')}`,
                  success: (appointments=>{
                      appointments.map(appointment=>{
                           $(`<div class="alert alert-success alert-dismissible">
@@ -109,10 +109,11 @@ $(function(){
             success: (userDetails)=>{
                
                
-                console.log(userDetails);
+                // console.log(userDetails);
                  if(userDetails){
                      if($("#password").val()===userDetails.password){
                          $.cookie('userid', $("#user_id").val());
+                         alert("Siging In...")
                          LoadDashboard();
                      } else {
                          alert('Invalid Password');
@@ -149,14 +150,14 @@ $(function(){
 
         $.ajax({
             method:"post",
-            url:`http://127.0.0.1:4040/add-appointment`,
+            url:`https://todo-backend-ouck.onrender.com/add-appointment`,
             data:appointment,
             success:()=>{
                
             }
            
         }) 
-         alert('appointment added.');
+         alert('appointment added successfully');
          LoadDashboard();
         
     })
@@ -172,7 +173,7 @@ $(function(){
           if(choice===true){
               $.ajax({
                     method: "delete", 
-                    url: `http://127.0.0.1:4040/delete-appointment/${e.target.value}`,
+                    url: `https://todo-backend-ouck.onrender.com/delete-appointment/${e.target.value}`,
                 })
                 alert('Appointment Deleted..');
                 LoadDashboard();
@@ -180,12 +181,12 @@ $(function(){
     })
 
 
-    //update button process...
+    //edit icon click  process...
     $(document).on("click", "#editbtn",(e)=>{
         LoadPage('edit-appointment.html');
         $.ajax({
             method: "get",
-            url: `http://127.0.0.1:4040/appointment-Details/${e.target.value}`,
+            url: `https://todo-backend-ouck.onrender.com/appointment-Details/${e.target.value}`,
             
             success: (appointments=>{
                 $("#appointment_id").val(appointments.appointment_id);
@@ -211,7 +212,7 @@ $(function(){
         
          $.ajax({
             method : "put",
-            url : `http://127.0.0.1:4040/edit-appointment/${sessionStorage.getItem("appointment_id")}`,
+            url : `https://todo-backend-ouck.onrender.com/edit-appointment/${sessionStorage.getItem("appointment_id")}`,
             contentType: "application/json",
             data : JSON.stringify(appointment)
                  
@@ -219,7 +220,7 @@ $(function(){
            
          })
          
-         alert('Appointment Updated Successfull ..');
+         alert('Appointment Updated Successfully');
          LoadDashboard();
         
     })
