@@ -52,7 +52,7 @@ function LoadPage(page_name){
 }
 
 $(function(){
-    LoadPage("pages/home.html");
+    LoadPage("home.html");
 
     //New User Button Click - on home
     $(document).on("click", "#btnNewUser",()=>{
