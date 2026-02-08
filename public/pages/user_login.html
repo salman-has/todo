@@ -1,14 +1,31 @@
+<div class="container">
+  <div class="row justify-content-center align-items-center vh-100">
 
-<div class="w-25 bg-light p-4">
-    <dl>
-        <h2>User Login</h2>
-        <dt>User Id</dt>
-        <dd><input type="text" id="user_id" class="form-control"></dd>
-        <dt>Password</dt>
-        <dd><input type="password" id="password" class="form-control"></dd>
-    </dl>
-    <button class="btn btn-primary w-100" id="btnLogin">Login</button>
-    <div>
-        <button class="btn btn-link" id="btnNewUser">New User?</button>
+    <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+      <div class="card shadow p-4 border-0">
+
+        <h3 class="text-center text-primary mb-4">User Login</h3>
+
+        <div class="mb-3">
+          <label class="form-label">User Id</label>
+          <input type="text" id="user_id" class="form-control" placeholder="Enter User Id">
+        </div>
+
+        <div class="mb-4">
+          <label class="form-label">Password</label>
+          <input type="password" id="password" class="form-control" placeholder="Enter Password">
+        </div>
+
+        <button class="btn btn-primary w-100 mb-2" id="btnLogin">
+          Login
+        </button>
+
+        <button class="btn btn-link w-100" id="btnNewUser">
+          New User? Register Here
+        </button>
+
+      </div>
     </div>
+
+  </div>
 </div>
