@@ -12,7 +12,7 @@ function LoadDashboard(){
                  method:'get',
                  url: `https://todo-backend-ouck.onrender.com/appointments/${$.cookie('userid')}`,
                  success: (appointments=>{
-                     $("#appointments").html("");
+                    //  $("#appointments").html("");
                      appointments.map(appointment=>{
                           $(`<div class="alert alert-success alert-dismissible">
                                <h3>Appointment Id :<span class="text-success"> ${appointment.appointment_id}</span</h3>
@@ -30,14 +30,10 @@ function LoadDashboard(){
           }
         })
 
-    } else {
-        $.ajax({
-        method: "get", 
-        url:`public/pages/${page_name}`,
-        success: (response)=>{
-            $("section").html(response);
-          }
-        })
+    } 
+    else 
+    {
+        LoadPage("home.html");
     }
 }
 
@@ -93,7 +89,7 @@ $(function(){
             processData:false,
             data: JSON.stringify(user),
             success:(res)=>{
-                console.log("loading...");
+                // console.log("loading...");
                 alert("User Registered");
                 LoadPage("user_login.html");
             }
