@@ -12,6 +12,7 @@ function LoadDashboard(){
                  method:'get',
                  url: `https://todo-backend-ouck.onrender.com/appointments/${$.cookie('userid')}`,
                  success: (appointments=>{
+                     $("#appointments").html("");
                      appointments.map(appointment=>{
                           $(`<div class="alert alert-success alert-dismissible">
                                <h3>Appointment Id :<span class="text-success"> ${appointment.appointment_id}</span</h3>
@@ -19,8 +20,8 @@ function LoadDashboard(){
                                <p class="text-secondary form-control-plaintext">Description : ${appointment.description} </p>
                                <div class="bi bi-calendar"> Date :   ${appointment.date.slice(0, appointment.date.indexOf("T"))}</div>
                                <div class="mt-3">
-                                  <button class="bi bi-pen-fill btn btn-warning m-x2" id="editbtn" value=${appointment.appointment_id}></button>
-                                  <button class="bi bi-trash btn btn-danger m-x2" id="deletebtn" value=${appointment.appointment_id}></button>
+                                  <button class="bi bi-pen-fill btn btn-warning m-x2 editbtn" value=${appointment.appointment_id}></button>
+                                  <button class="bi bi-trash btn btn-danger m-x2 deletebtn" value=${appointment.appointment_id}></button>
                                </div>
                             </div>`).appendTo("#appointments");
                      })
@@ -44,11 +45,14 @@ function LoadDashboard(){
 function LoadPage(page_name){
     $.ajax({
         method: "get", 
-        url:`../../public/pages/${page_name}`,
+        url:`public/pages/${page_name}`,
         success: (response)=>{
             $("section").html(response);
-          }
-        })
+        },
+        error: ()=>{
+            alert("Page load error: " + page_name);
+        }
+    })
 }
 
 $(function(){
@@ -168,7 +172,7 @@ $(function(){
     })
 
     //delete button process.
-    $(document).on("click", "#deletebtn", (e)=>{
+    $(document).on("click", ".deletebtn", (e)=>{
          var choice = confirm('Are you sure? Want to Delete?');
           if(choice===true){
               $.ajax({
@@ -182,7 +186,7 @@ $(function(){
 
 
     //edit icon click  process...
-    $(document).on("click", "#editbtn",(e)=>{
+    $(document).on("click", ".editbtn",(e)=>{
         LoadPage('edit-appointment.html');
         $.ajax({
             method: "get",
