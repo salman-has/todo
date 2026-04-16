@@ -72,7 +72,7 @@ $(function(){
 
      $(document).on("click", "#btnRegister",(e)=>{
         e.preventDefault();
-        alert("clicked");
+        // alert("clicked");
 
         var user = {
             user_id : $("#user_id").val(),
@@ -90,7 +90,8 @@ $(function(){
             data: JSON.stringify(user),
             success:(res)=>{
                 // console.log("loading...");
-                alert("User Registered");
+                // alert("User Registered");
+                toastr.success("User Registered Successfully");
                 LoadPage("user_login.html");
             }
         })
@@ -157,7 +158,7 @@ $(function(){
             }
            
         }) 
-         alert('appointment added successfully');
+         toastr.success("Appointment Added Successfully");
          LoadDashboard();
         
     })
@@ -175,7 +176,7 @@ $(function(){
                     method: "delete", 
                     url: `https://todo-backend-ouck.onrender.com/delete-appointment/${e.target.value}`,
                 })
-                alert('Appointment Deleted..');
+                 toastr.success("Appointment Deleted Successfully");
                 LoadDashboard();
           }
     })
@@ -221,7 +222,7 @@ $(function(){
            
          })
          
-         alert('Appointment Updated Successfully');
+         toastr.success("Appointment Updated Successfully");
          LoadDashboard();
         
     })
