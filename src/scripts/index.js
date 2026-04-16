@@ -46,7 +46,8 @@ function LoadPage(page_name){
             $("section").html(response);
         },
         error: ()=>{
-            alert("Page load error: " + page_name);
+            // alert("Page load error: " + page_name);
+            toastr.error("Something went wrong" + page_name);
         }
     })
 }
@@ -117,10 +118,10 @@ $(function(){
                          alert("Siging In...")
                          LoadDashboard();
                      } else {
-                         alert('Invalid Password');
+                        toastr.warning("Invalid password");
                      }
                  } else {
-                     alert(`User Not Found`);
+                     toastr.warning("User not found ! ");
                  }
             }
           })
@@ -176,7 +177,7 @@ $(function(){
                     method: "delete", 
                     url: `https://todo-backend-ouck.onrender.com/delete-appointment/${e.target.value}`,
                 })
-                 toastr.success("Appointment Deleted Successfully");
+                 toastr.warning("Appointment Deleted Successfully");
                 LoadDashboard();
           }
     })
