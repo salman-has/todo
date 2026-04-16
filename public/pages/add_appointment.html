@@ -1,16 +1,48 @@
+<div class="container">
+  <div class="row justify-content-center align-items-center vh-100">
+    
+    <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+      
+      <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
 
-<div class="w-25 bg-light p-4">
-    <h2>Add New Appointment</h2>
-    <dl>
-        <dt>Appointment Id</dt>
-        <dd><input type="text" id="appointment_id" class="form-control"></dd>
-        <dt>Title</dt>
-        <dd><input type="text" id="title" class="form-control"></dd>
-        <dt>Description</dt>
-        <dd><input type="text" id="description" class="form-control"></dd>
-        <dt>Date</dt>
-        <dd><input type="date" id="date" class="form-control"></dd>
-    </dl>
-    <button class="btn btn-primary " id="btnAdd">Add </button>
-    <button id="btnCancel" class="btn btn-danger mx-2">Cancel</button>
+          <h3 class="text-center mb-4 text-primary">
+            Add New Appointment
+          </h3>
+
+          <div class="mb-3">
+            <label class="form-label">Appointment Id</label>
+            <input type="text" id="appointment_id" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" id="title" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input type="text" id="description" class="form-control">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Date</label>
+            <input type="date" id="date" class="form-control">
+          </div>
+
+          <div class="d-grid gap-2">
+            <button class="btn btn-primary" id="btnAdd">
+              Add Appointment
+            </button>
+            <button class="btn btn-outline-danger" id="btnCancel">
+              Cancel
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </div>
 </div>
