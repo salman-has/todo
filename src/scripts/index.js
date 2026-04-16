@@ -1,20 +1,18 @@
-
-function LoadDashboard(){
-    if($.cookie('userid')){
-        
+function LoadDashboard() {
+  if ($.cookie("userid")) {
+    $.ajax({
+      method: "get",
+      url: `public/pages/user_dashboard.html`,
+      success: (response) => {
+        $("section").html(response);
+        $("#lblUser").html($.cookie("userid"));
         $.ajax({
-        method: "get", 
-        url:`public/pages/user_dashboard.html`,
-        success: (response)=>{
-             $("section").html(response);
-             $("#lblUser").html($.cookie('userid'));
-             $.ajax({
-                 method:'get',
-                 url: `https://todo-backend-ouck.onrender.com/appointments/${$.cookie('userid')}`,
-                 success: (appointments=>{
-                    //  $("#appointments").html("");
-                     appointments.map(appointment=>{
-                          $(`<div class="alert alert-success alert-dismissible">
+          method: "get",
+          url: `https://todo-backend-ouck.onrender.com/appointments/${$.cookie("userid")}`,
+          success: (appointments) => {
+            //  $("#appointments").html("");
+            appointments.map((appointment) => {
+              $(`<div class="alert alert-success alert-dismissible">
                                <h3>Appointment Id :<span class="text-success"> ${appointment.appointment_id}</span</h3>
                                <h2 class="text-black">Meeting Title : ${appointment.title}</h2>
                                <p class="text-secondary form-control-plaintext">Description : ${appointment.description} </p>
@@ -24,214 +22,199 @@ function LoadDashboard(){
                                   <button class="bi bi-trash btn btn-danger m-x2 deletebtn" value=${appointment.appointment_id}></button>
                                </div>
                             </div>`).appendTo("#appointments");
-                     })
-                 })
-             })
-          }
-        })
-
-    } 
-    else 
-    {
-        LoadPage("home.html");
-    }
-}
-
-
-function LoadPage(page_name){
-    $.ajax({
-        method: "get", 
-        url:`public/pages/${page_name}`,
-        success: (response)=>{
-            $("section").html(response);
-        },
-        error: ()=>{
-            // alert("Page load error: " + page_name);
-            toastr.error("Something went wrong" + page_name);
-        }
-    })
-}
-
-$(function(){
+            });
+          },
+        });
+      },
+    });
+  } else {
     LoadPage("home.html");
+  }
+}
 
-    //New User Button Click - on home
-    $(document).on("click", "#btnNewUser",()=>{
-        LoadPage("new_user.html");
-    })
+function LoadPage(page_name) {
+  $.ajax({
+    method: "get",
+    url: `public/pages/${page_name}`,
+    success: (response) => {
+      $("section").html(response);
+    },
+    error: () => {
+      // alert("Page load error: " + page_name);
+      toastr.error("Something went wrong" + page_name);
+    },
+  });
+}
 
-    // Signin Button Click - on home
-    $(document).on("click", "#btnSignin",()=>{
+$(function () {
+  LoadPage("home.html");
+
+  //New User Button Click - on home
+  $(document).on("click", "#btnNewUser", () => {
+    LoadPage("new_user.html");
+  });
+
+  // Signin Button Click - on home
+  $(document).on("click", "#btnSignin", () => {
+    LoadPage("user_login.html");
+  });
+
+  $(document).on("click", "#btnExistingUser", () => {
+    LoadPage("user_login.html");
+  });
+
+  // Register Button Click - Post Data to Users
+
+  $(document).on("click", "#btnRegister", (e) => {
+    e.preventDefault();
+    // alert("clicked");
+
+    var user = {
+      user_id: $("#user_id").val(),
+      user_name: $("#user_name").val(),
+      password: $("#password").val(),
+      mobile: $("#mobile").val(),
+    };
+
+    $.ajax({
+      method: "post",
+      url: `https://todo-backend-ouck.onrender.com/register-user`,
+      contentType: "application/json",
+      dataType: "json",
+      processData: false,
+      data: JSON.stringify(user),
+      success: (res) => {
+        // console.log("loading...");
+        // alert("User Registered");
+        toastr.success("User Registered Successfully");
         LoadPage("user_login.html");
-    })
+      },
+    });
+  });
 
-    $(document).on("click", "#btnExistingUser",()=>{
-        LoadPage("user_login.html");
-    })
+  // Login Button - on login page
 
-    // Register Button Click - Post Data to Users
+  $(document).on("click", "#btnLogin", () => {
+    var user_id = $("#user_id").val();
 
-     $(document).on("click", "#btnRegister",(e)=>{
-        e.preventDefault();
-        // alert("clicked");
-
-        var user = {
-            user_id : $("#user_id").val(),
-            user_name: $("#user_name").val(),
-            password: $("#password").val(),
-            mobile: $("#mobile").val()
-        }
-
-        $.ajax({
-            method: "post",
-            url: `https://todo-backend-ouck.onrender.com/register-user`,
-            contentType:"application/json",
-            dataType:"json",
-            processData:false,
-            data: JSON.stringify(user),
-            success:(res)=>{
-                // console.log("loading...");
-                // alert("User Registered");
-                toastr.success("User Registered Successfully");
-                LoadPage("user_login.html");
-            }
-        })
-        
-    })
-    
-    // Login Button - on login page
-
-    $(document).on("click", "#btnLogin",()=>{
-
-          var user_id = $("#user_id").val();
-
-          $.ajax({
-            method: 'get',
-            url: `https://todo-backend-ouck.onrender.com/users/${user_id}`,
-            success: (userDetails)=>{
-               
-               
-                // console.log(userDetails);
-                 if(userDetails){
-                     if($("#password").val()===userDetails.password){
-                         $.cookie('userid', $("#user_id").val());
-                         alert("Siging In...")
-                         LoadDashboard();
-                     } else {
-                        toastr.warning("Invalid password");
-                     }
-                 } else {
-                     toastr.warning("User not found ! ");
-                 }
-            }
-          })
-
-    })
-
-    // Signout Logic
-
-    $(document).on("click", "#btnSignout",()=>{
-         $.removeCookie('userid');
-         LoadPage('home.html');
-    })
-    // New Appointment
-    $(document).on("click", "#btnNewAppointment",()=>{
-         LoadPage('add_appointment.html');
-    })
-
-    //adding appointment
-    $(document).on("click", "#btnAdd",()=>{
-        var appointment = {
-            appointment_id : $("#appointment_id").val(),
-            title: $("#title").val(),
-            description: $("#description").val(),
-            date: $("#date").val(),
-            user_id:$.cookie("userid")
-
-        }
-
-        $.ajax({
-            method:"post",
-            url:`https://todo-backend-ouck.onrender.com/add-appointment`,
-            data:appointment,
-            success:()=>{
-               
-            }
-           
-        }) 
-         toastr.success("Appointment Added Successfully");
-         LoadDashboard();
-        
-    })
-
-    $(document).on("click", "#btnCancel",()=>{
-        //  LoadPage('user_dashboard.html');
-         LoadDashboard();
-    })
-
-    //delete button process.
-    $(document).on("click", ".deletebtn", (e)=>{
-         var choice = confirm('Are you sure? Want to Delete?');
-          if(choice===true){
-              $.ajax({
-                    method: "delete", 
-                    url: `https://todo-backend-ouck.onrender.com/delete-appointment/${e.target.value}`,
-                })
-                 toastr.warning("Appointment Deleted Successfully");
-                LoadDashboard();
+    $.ajax({
+      method: "get",
+      url: `https://todo-backend-ouck.onrender.com/users/${user_id}`,
+      success: (userDetails) => {
+        // console.log(userDetails);
+        if (userDetails) {
+          if ($("#password").val() === userDetails.password) {
+            $.cookie("userid", $("#user_id").val());
+            alert("Siging In...");
+            LoadDashboard();
+          } else {
+            toastr.warning("Invalid password");
           }
-    })
+        } else {
+          toastr.warning("User not found ! ");
+        }
+      },
+      error: (err) => {
+        console.log(err);
+        toastr.error("Server Error / User Not Found");
+      },
+    });
+  });
 
+  // Signout Logic
 
-    //edit icon click  process...
-    $(document).on("click", ".editbtn",(e)=>{
-        LoadPage('edit-appointment.html');
-        $.ajax({
-            method: "get",
-            url: `https://todo-backend-ouck.onrender.com/appointment-Details/${e.target.value}`,
-            
-            success: (appointments=>{
-                console.log(appointments.date);
-                $("#appointment_id").val(appointments.appointment_id);
-               
-                $("#title").val(appointments.title);
-               
-                $("#description").val(appointments.description);
-                $("#date").val(appointments.date.slice(0,appointments.date.indexOf("T")));
-                sessionStorage.setItem("appointment_id",appointments.appointment_id);
-            })
-        })
-    })
+  $(document).on("click", "#btnSignout", () => {
+    $.removeCookie("userid");
+    LoadPage("home.html");
+  });
+  // New Appointment
+  $(document).on("click", "#btnNewAppointment", () => {
+    LoadPage("add_appointment.html");
+  });
 
-    //update button process,.....
-    $(document).on("click","#btnupdate", ()=>{
-         var appointment = {
-            appointment_id : $("#appointment_id").val(),
-            title : $("#title").val(),
-            description : $("#description").val(),
-            date : $("#date").val(),
-            user_id : $.cookie("userid")
-         }
-        
-         $.ajax({
-            method : "put",
-            url : `https://todo-backend-ouck.onrender.com/edit-appointment/${sessionStorage.getItem("appointment_id")}`,
-            contentType: "application/json",
-            data : JSON.stringify(appointment)
-                 
-            
-           
-         })
-         
-         toastr.success("Appointment Updated Successfully");
-         LoadDashboard();
-        
-    })
+  //adding appointment
+  $(document).on("click", "#btnAdd", () => {
+    var appointment = {
+      appointment_id: $("#appointment_id").val(),
+      title: $("#title").val(),
+      description: $("#description").val(),
+      date: $("#date").val(),
+      user_id: $.cookie("userid"),
+    };
 
+    $.ajax({
+      method: "post",
+      url: `https://todo-backend-ouck.onrender.com/add-appointment`,
+      data: appointment,
+      success: () => {},
+    });
+    toastr.success("Appointment Added Successfully");
+    LoadDashboard();
+  });
 
-    //cancel update button ...
-    $(document).on("click","#btnupdateCancel",()=>{
-        LoadDashboard();
-    })
+  $(document).on("click", "#btnCancel", () => {
+    //  LoadPage('user_dashboard.html');
+    LoadDashboard();
+  });
 
-})
+  //delete button process.
+  $(document).on("click", ".deletebtn", (e) => {
+    var choice = confirm("Are you sure? Want to Delete?");
+    if (choice === true) {
+      $.ajax({
+        method: "delete",
+        url: `https://todo-backend-ouck.onrender.com/delete-appointment/${e.target.value}`,
+      });
+      toastr.warning("Appointment Deleted Successfully");
+      LoadDashboard();
+    }
+  });
+
+  //edit icon click  process...
+  $(document).on("click", ".editbtn", (e) => {
+    LoadPage("edit-appointment.html");
+    $.ajax({
+      method: "get",
+      url: `https://todo-backend-ouck.onrender.com/appointment-Details/${e.target.value}`,
+
+      success: (appointments) => {
+        console.log(appointments.date);
+        $("#appointment_id").val(appointments.appointment_id);
+
+        $("#title").val(appointments.title);
+
+        $("#description").val(appointments.description);
+        $("#date").val(
+          appointments.date.slice(0, appointments.date.indexOf("T")),
+        );
+        sessionStorage.setItem("appointment_id", appointments.appointment_id);
+      },
+    });
+  });
+
+  //update button process,.....
+  $(document).on("click", "#btnupdate", () => {
+    var appointment = {
+      appointment_id: $("#appointment_id").val(),
+      title: $("#title").val(),
+      description: $("#description").val(),
+      date: $("#date").val(),
+      user_id: $.cookie("userid"),
+    };
+
+    $.ajax({
+      method: "put",
+      url: `https://todo-backend-ouck.onrender.com/edit-appointment/${sessionStorage.getItem("appointment_id")}`,
+      contentType: "application/json",
+      data: JSON.stringify(appointment),
+    });
+
+    toastr.success("Appointment Updated Successfully");
+    LoadDashboard();
+  });
+
+  //cancel update button ...
+  $(document).on("click", "#btnupdateCancel", () => {
+    LoadDashboard();
+  });
+});
