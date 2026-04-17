@@ -67,6 +67,26 @@ $(function () {
 
   $(document).on("click", "#btnRegister", (e) => {
     e.preventDefault();
+
+    if (
+      $("#user_id").val() === "" ||
+      $("#password").val() === "" ||
+      $("#user_name").val() === "" ||
+      $("#mobile").val() === ""
+    ) {
+      toastr.error("All fields are required");
+      return;
+    }
+
+    //  Loader start
+    $("#btnRegister")
+      .html(
+        `
+        <span class="spinner-border spinner-border-sm"></span> Please Wait...
+    `,
+      )
+      .prop("disabled", true);
+
     // alert("clicked");
 
     var user = {
@@ -84,10 +104,16 @@ $(function () {
       processData: false,
       data: JSON.stringify(user),
       success: (res) => {
-        // console.log("loading...");
-        // alert("User Registered");
         toastr.success("User Registered Successfully");
-        LoadPage("user_login.html");
+        //  Loader stop
+
+        // alert("User Registered");
+        setTimeout(() => {
+          $("#btnLogin").html("Login").prop("disabled", false);
+          LoadPage("user_login.html");
+        }, 3000);
+
+        // LoadPage("user_login.html");
       },
     });
   });
@@ -95,32 +121,54 @@ $(function () {
   // Login Button - on login page
 
   $(document).on("click", "#btnLogin", () => {
+    if ($("#user_id").val() === "" || $("#password").val() === "") {
+      toastr.error("All fields are required");
+      return;
+    }
+
+    //  Loader start
+    $("#btnLogin")
+      .html(
+        `
+        <span class="spinner-border spinner-border-sm"></span> Processing...
+    `,
+      )
+      .prop("disabled", true);
+
     var user_id = $("#user_id").val();
 
     $.ajax({
       method: "get",
       url: `https://todo-backend-ouck.onrender.com/users/${user_id}`,
+
       success: (userDetails) => {
-        // console.log(userDetails);
+        //  Loader stop
+        $("#btnLogin").html("Login").prop("disabled", false);
+
         if (userDetails) {
           if ($("#password").val() === userDetails.password) {
-            $.cookie("userid", $("#user_id").val());
-            alert("Siging In...");
-            LoadDashboard();
+            $.cookie("userid", user_id);
+
+            toastr.success("Login Successful");
+
+            setTimeout(() => {
+              LoadDashboard();
+            }, 700);
           } else {
-            toastr.warning("Invalid password");
+            toastr.warning("Invalid Password");
           }
         } else {
-          toastr.warning("User not found ! ");
+          toastr.warning("User Not Found");
         }
       },
-      error: (err) => {
-        console.log(err);
-        toastr.error("Server Error / User Not Found");
+
+      error: () => {
+        $("#btnLogin").html("Login").prop("disabled", false);
+
+        toastr.error("Server Error / User Not Found !");
       },
     });
   });
-
   // Signout Logic
 
   $(document).on("click", "#btnSignout", () => {

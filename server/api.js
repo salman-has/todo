@@ -7,24 +7,41 @@ const PORT = process.env.PORT || 5000;
 
 const app = express();
 // app.use(cors());
-app.use(cors({ origin: "*" }));
+// app.use(cors({ origin: "*" }));
+app.use(cors({
+  origin: [
+    "http://localhost:5500",
+    "https://salman-has.github.io"
+  ]
+}));
 app.use(express.urlencoded({extended:true}));
 app.use(express.json());
 
 app.get('/users/:userid', (req, res)=>{
-    mongoClient.connect(conString).then(clientObj=>{
+    mongoClient.connect(conString)
+    .then(clientObj=>{
          var database = clientObj.db("todo");
-         database.collection('users').findOne({user_id:req.params.userid}).then(user=>{
+         database.collection('users').findOne({user_id:req.params.userid})
+         .then(user=>{
 
                 // res.send(user);
-                res.json({
-                    user_id:user.user_id,
-                    user_name:user.user_name,
-                    password:user.password,
-                    mobile:user.mobile
-                });
+            //     res.json({
+            //         user_id:user.user_id,
+            //         user_name:user.user_name,
+            //         password:user.password,
+            //         mobile:user.mobile
+            //     });
+        
+               
+            
 
-         })
+        //  })
+
+          if(user){
+      res.json(user);
+   } else {
+      res.json(null);   // important
+   }
     });
 });
 
