@@ -6,24 +6,66 @@ function LoadDashboard() {
       success: (response) => {
         $("section").html(response);
         $("#lblUser").html($.cookie("userid"));
+
+        //  Loader (better centered UI)
+        $("#appointments").html(`
+          <div class="d-flex justify-content-center align-items-center flex-column" style="height:200px;">
+              <div class="spinner-border text-primary mb-2"></div>
+              <span class="text-muted">Loading appointments...</span>
+          </div>
+        `);
+
         $.ajax({
           method: "get",
           url: `https://todo-backend-ouck.onrender.com/appointments/${$.cookie("userid")}`,
+
           success: (appointments) => {
-            //  $("#appointments").html("");
+
+            // Empty state handle
+            if (!appointments || appointments.length === 0) {
+              $("#appointments").html(`
+                <div class="text-center text-muted mt-4">
+                  No appointments found
+                </div>
+              `);
+              return;
+            }
+
+            // clear loader
+            $("#appointments").html("");
+
             appointments.map((appointment) => {
               $(`<div class="alert alert-success alert-dismissible">
-                               <h3>Appointment Id :<span class="text-success"> ${appointment.appointment_id}</span</h3>
-                               <h2 class="text-black">Meeting Title : ${appointment.title}</h2>
-                               <p class="text-secondary form-control-plaintext">Description : ${appointment.description} </p>
-                               <div class="bi bi-calendar"> Date :   ${appointment.date.slice(0, appointment.date.indexOf("T"))}</div>
-                               <div class="mt-3">
-                                  <button class="bi bi-pen-fill btn btn-warning m-x2 editbtn" value=${appointment.appointment_id}></button>
-                                  <button class="bi bi-trash btn btn-danger m-x2 deletebtn" value=${appointment.appointment_id}></button>
-                               </div>
-                            </div>`).appendTo("#appointments");
+                    <h5>Appointment Id :
+                      <span class="text-success">${appointment.appointment_id}</span>
+                    </h5>
+
+                    <h4 class="text-black">${appointment.title}</h4>
+
+                    <p class="text-secondary">
+                      ${appointment.description}
+                    </p>
+
+                    <div class="bi bi-calendar">
+                      ${appointment.date.slice(0, appointment.date.indexOf("T"))}
+                    </div>
+
+                    <div class="mt-3">
+                      <button class="bi bi-pen-fill btn btn-warning me-2 editbtn" value=${appointment.appointment_id}></button>
+                      <button class="bi bi-trash btn btn-danger deletebtn" value=${appointment.appointment_id}></button>
+                    </div>
+                </div>`).appendTo("#appointments");
             });
           },
+
+          //  Error handling (important)
+          error: () => {
+            $("#appointments").html(`
+              <div class="text-danger text-center mt-4">
+                Failed to load data
+              </div>
+            `);
+          }
         });
       },
     });
@@ -181,59 +223,57 @@ $(function () {
   });
 
   //adding appointment
- $(document).on("click", "#btnAdd", () => {
+  $(document).on("click", "#btnAdd", () => {
+    // validation
+    if (
+      $("#appointment_id").val() === "" ||
+      $("#title").val() === "" ||
+      $("#description").val() === "" ||
+      $("#date").val() === ""
+    ) {
+      toastr.error("All fields are required");
+      return;
+    }
 
-  // validation
-  if (
-    $("#appointment_id").val() === "" ||
-    $("#title").val() === "" ||
-    $("#description").val() === "" ||
-    $("#date").val() === ""
-  ) {
-    toastr.error("All fields are required");
-    return;
-  }
+    //  button loader start
+    $("#btnAdd")
+      .html(`<span class="spinner-border spinner-border-sm"></span> Adding...`)
+      .prop("disabled", true);
 
-  //  button loader start
-  $("#btnAdd")
-    .html(`<span class="spinner-border spinner-border-sm"></span> Adding...`)
-    .prop("disabled", true);
+    var appointment = {
+      // appointment_id: $("#appointment_id").val(),
+      appointment_id: Date.now().toString(),
+      title: $("#title").val(),
+      description: $("#description").val(),
+      date: $("#date").val(),
+      user_id: $.cookie("userid"),
+    };
 
-  var appointment = {
-    // appointment_id: $("#appointment_id").val(),
-    appointment_id: Date.now().toString(),
-    title: $("#title").val(),
-    description: $("#description").val(),
-    date: $("#date").val(),
-    user_id: $.cookie("userid"),
-  };
+    $.ajax({
+      method: "post",
+      url: `https://todo-backend-ouck.onrender.com/add-appointment`,
+      contentType: "application/json",
+      data: JSON.stringify(appointment),
+      dataType: "text",
 
-  $.ajax({
-    method: "post",
-    url: `https://todo-backend-ouck.onrender.com/add-appointment`,
-    contentType: "application/json",
-    data: JSON.stringify(appointment),
-    dataType: "text",
+      success: () => {
+        //  loader stop
+        $("#btnAdd").html("Add").prop("disabled", false);
 
-    success: () => {
+        toastr.success("Appointment Added Successfully");
 
-      //  loader stop
-      $("#btnAdd").html("Add").prop("disabled", false);
+        //  थोड़ा delay ताकि user message देख सके
+        setTimeout(() => {
+          LoadDashboard();
+        }, 800);
+      },
 
-      toastr.success("Appointment Added Successfully");
-
-      //  थोड़ा delay ताकि user message देख सके
-      setTimeout(() => {
-        LoadDashboard();
-      }, 800);
-    },
-
-    error: (err) => {
-  console.log(err);   // important
-  toastr.error("Server Error");
-}
+      error: (err) => {
+        console.log(err); // important
+        toastr.error("Server Error");
+      },
+    });
   });
-});
 
   $(document).on("click", "#btnCancel", () => {
     //  LoadPage('user_dashboard.html');
@@ -242,10 +282,9 @@ $(function () {
 
   //delete button process.
   $(document).on("click", ".deletebtn", (e) => {
-
-    if(!e.target.value){
-        toastr.error("Invalid appointment ID");
-        return;
+    if (!e.target.value) {
+      toastr.error("Invalid appointment ID");
+      return;
     }
 
     var choice = confirm("Are you sure? Want to Delete?");
@@ -261,10 +300,10 @@ $(function () {
 
   //edit icon click  process...
   $(document).on("click", ".editbtn", (e) => {
-    if(!e.target.value){
-   toastr.error("Invalid appointment");
-   return;
-}
+    if (!e.target.value) {
+      toastr.error("Invalid appointment");
+      return;
+    }
     LoadPage("edit-appointment.html");
     $.ajax({
       method: "get",

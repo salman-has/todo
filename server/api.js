@@ -8,146 +8,152 @@ const PORT = process.env.PORT || 5000;
 const app = express();
 // app.use(cors());
 // app.use(cors({ origin: "*" }));
-app.use(cors({
-  origin: [
-    "http://localhost:5500",
-    "https://salman-has.github.io"
-  ]
-}));
-app.use(express.urlencoded({extended:true}));
+app.use(
+  cors({
+    origin: ["http://localhost:5500", "https://salman-has.github.io"],
+  }),
+);
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/users/:userid', (req, res)=>{
-    mongoClient.connect(conString)
-    .then(clientObj=>{
-         var database = clientObj.db("todo");
-         database.collection('users').findOne({user_id:req.params.userid})
-         .then(user=>{
-
-                // res.send(user);
-            //     res.json({
-            //         user_id:user.user_id,
-            //         user_name:user.user_name,
-            //         password:user.password,
-            //         mobile:user.mobile
-            //     });
-        
-               
-            
+app.get("/users/:userid", (req, res) => {
+  mongoClient.connect(conString).then((clientObj) => {
+    var database = clientObj.db("todo");
+    database
+      .collection("users")
+      .findOne({ user_id: req.params.userid })
+      .then((user) => {
+        // res.send(user);
+        //     res.json({
+        //         user_id:user.user_id,
+        //         user_name:user.user_name,
+        //         password:user.password,
+        //         mobile:user.mobile
+        //     });
 
         //  })
 
-          if(user){
-      res.json(user);
-   } else {
-      res.json(null);   // important
-   }
-    });
+        if (user) {
+          res.json(user);
+        } else {
+          res.json(null); // important
+        }
+      });
+  });
 });
 
-app.get('/appointments/:userid', (req, res)=>{
-    mongoClient.connect(conString).then(clientObj=>{
-         var database = clientObj.db("todo");
-         database.collection('appointments').find({user_id:req.params.userid}).toArray().then(documents=>{
-              res.send(documents);
-              res.end();
-         });
-    });
+app.get("/appointments/:userid", (req, res) => {
+  mongoClient.connect(conString).then((clientObj) => {
+    var database = clientObj.db("todo");
+    database
+      .collection("appointments")
+      .find({ user_id: req.params.userid })
+      .toArray()
+      .then((documents) => {
+        res.send(documents);
+        res.end();
+      });
+  });
 });
 
-app.get('/appointment-Details/:id', (req, res)=>{
-    mongoClient.connect(conString).then(clientObj=>{
-         var database = clientObj.db("todo");
-         database.collection('appointments').findOne({appointment_id:req.params.id}).then(document=>{
-            res.send(document);
-            res.end();
-         });
-    });
+app.get("/appointment-Details/:id", (req, res) => {
+  mongoClient.connect(conString).then((clientObj) => {
+    var database = clientObj.db("todo");
+    database
+      .collection("appointments")
+      .findOne({ appointment_id: req.params.id })
+      .then((document) => {
+        res.send(document);
+        res.end();
+      });
+  });
 });
 
-app.post('/register-user', (req, res)=>{
+app.post("/register-user", (req, res) => {
+  var user = {
+    user_id: req.body.user_id,
+    user_name: req.body.user_name,
+    password: req.body.password,
+    mobile: req.body.mobile,
+  };
 
-    var user = {
-        user_id: req.body.user_id,
-        user_name: req.body.user_name,
-        password: req.body.password,
-        mobile: req.body.mobile
-    }
-
-    mongoClient.connect(conString).then(clientObj=>{
-        var database = clientObj.db("todo");
-        database.collection('users').insertOne(user).then(()=>{
-            
-              res.json({
-                 message:"user registered successfully"
-              })
-                
-                
-            
+  mongoClient.connect(conString).then((clientObj) => {
+    var database = clientObj.db("todo");
+    database
+      .collection("users")
+      .insertOne(user)
+      .then(() => {
+        res.json({
+          message: "user registered successfully",
         });
-   });
+      });
+  });
 });
 
-app.post('/add-appointment', (req, res)=>{
+app.post("/add-appointment", (req, res) => {
+  var appointment = {
+    appointment_id: req.body.appointment_id,
+    title: req.body.title,
+    description: req.body.description,
+    date: new Date(req.body.date),
+    user_id: req.body.user_id,
+  };
 
-    var appointment = {
-        appointment_id : req.body.appointment_id,
-        title: req.body.title, 
-        description: req.body.description, 
-        date: new Date(req.body.date),
-        user_id: req.body.user_id
-    };
-
-    mongoClient.connect(conString).then(clientObj=>{
-        var database = clientObj.db("todo");
-        database.collection('appointments').insertOne(appointment).then(()=>{
-              console.log('Appointment Added');
-            //   res.json();
-              res.json({ message: "Appointment Added" });
-        });
-   });
+  mongoClient.connect(conString).then((clientObj) => {
+    var database = clientObj.db("todo");
+    database
+      .collection("appointments")
+      .insertOne(appointment)
+      .then(() => {
+        console.log("Appointment Added");
+        //   res.json();
+        res.json({ message: "Appointment Added" });
+      });
+  });
 });
 
-app.put('/edit-appointment/:id', (req, res)=>{
+app.put("/edit-appointment/:id", (req, res) => {
+  const id = req.params.id;
 
-    const id = req.params.id;
+  var appointment = {
+    appointment_id: req.body.appointment_id,
+    title: req.body.title,
+    description: req.body.description,
+    date: new Date(req.body.date),
+    user_id: req.body.user_id,
+  };
 
-    var appointment = {
-        appointment_id : req.body.appointment_id,
-        title: req.body.title, 
-        description: req.body.description, 
-        date: new Date(req.body.date),
-        user_id: req.body.user_id
-    };
-
-    mongoClient.connect(conString).then(clientObj=>{
-        var database = clientObj.db("todo");
-        database.collection('appointments').updateOne({appointment_id:id},{$set:appointment})
-        .then(()=>{
-            console.log('Appointment Updated');
-            res.json();
-
-        });
-   });
+  mongoClient.connect(conString).then((clientObj) => {
+    var database = clientObj.db("todo");
+    database
+      .collection("appointments")
+      .updateOne({ appointment_id: id }, { $set: appointment })
+      .then(() => {
+        console.log("Appointment Updated");
+        res.json();
+      });
+  });
 });
 
-app.delete('/delete-appointment/:id', (req, res)=>{
-    var id = req.params.id;
+app.delete("/delete-appointment/:id", (req, res) => {
+  var id = req.params.id;
 
-    mongoClient.connect(conString).then(clientObj=>{
-        var database = clientObj.db("todo");
-        database.collection('appointments').deleteOne({appointment_id:id})
-        .then(()=>{
-            console.log('Appointment Deleted');
-            res.end();
-        });
-   });
+  mongoClient.connect(conString).then((clientObj) => {
+    var database = clientObj.db("todo");
+    database
+      .collection("appointments")
+      .deleteOne({ appointment_id: id })
+      .then(() => {
+        console.log("Appointment Deleted");
+        res.end();
+      });
+  });
 });
-app.get('/',(req,res)=>{
-    res.send("API is working fine .");
-    res.end();
+app.get("/", (req, res) => {
+  res.send("API is working fine .");
+  res.end();
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
