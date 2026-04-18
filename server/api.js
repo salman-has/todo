@@ -102,7 +102,8 @@ app.post('/add-appointment', (req, res)=>{
         var database = clientObj.db("todo");
         database.collection('appointments').insertOne(appointment).then(()=>{
               console.log('Appointment Added');
-              res.json();
+            //   res.json();
+              res.json({ message: "Appointment Added" });
         });
    });
 });

@@ -181,24 +181,59 @@ $(function () {
   });
 
   //adding appointment
-  $(document).on("click", "#btnAdd", () => {
-    var appointment = {
-      appointment_id: $("#appointment_id").val(),
-      title: $("#title").val(),
-      description: $("#description").val(),
-      date: $("#date").val(),
-      user_id: $.cookie("userid"),
-    };
+ $(document).on("click", "#btnAdd", () => {
 
-    $.ajax({
-      method: "post",
-      url: `https://todo-backend-ouck.onrender.com/add-appointment`,
-      data: appointment,
-      success: () => {},
-    });
-    toastr.success("Appointment Added Successfully");
-    LoadDashboard();
+  // validation
+  if (
+    $("#appointment_id").val() === "" ||
+    $("#title").val() === "" ||
+    $("#description").val() === "" ||
+    $("#date").val() === ""
+  ) {
+    toastr.error("All fields are required");
+    return;
+  }
+
+  //  button loader start
+  $("#btnAdd")
+    .html(`<span class="spinner-border spinner-border-sm"></span> Adding...`)
+    .prop("disabled", true);
+
+  var appointment = {
+    // appointment_id: $("#appointment_id").val(),
+    appointment_id: Date.now().toString(),
+    title: $("#title").val(),
+    description: $("#description").val(),
+    date: $("#date").val(),
+    user_id: $.cookie("userid"),
+  };
+
+  $.ajax({
+    method: "post",
+    url: `https://todo-backend-ouck.onrender.com/add-appointment`,
+    contentType: "application/json",
+    data: JSON.stringify(appointment),
+    dataType: "text",
+
+    success: () => {
+
+      //  loader stop
+      $("#btnAdd").html("Add").prop("disabled", false);
+
+      toastr.success("Appointment Added Successfully");
+
+      //  थोड़ा delay ताकि user message देख सके
+      setTimeout(() => {
+        LoadDashboard();
+      }, 800);
+    },
+
+    error: (err) => {
+  console.log(err);   // important
+  toastr.error("Server Error");
+}
   });
+});
 
   $(document).on("click", "#btnCancel", () => {
     //  LoadPage('user_dashboard.html');
@@ -207,6 +242,12 @@ $(function () {
 
   //delete button process.
   $(document).on("click", ".deletebtn", (e) => {
+
+    if(!e.target.value){
+        toastr.error("Invalid appointment ID");
+        return;
+    }
+
     var choice = confirm("Are you sure? Want to Delete?");
     if (choice === true) {
       $.ajax({
@@ -220,6 +261,10 @@ $(function () {
 
   //edit icon click  process...
   $(document).on("click", ".editbtn", (e) => {
+    if(!e.target.value){
+   toastr.error("Invalid appointment");
+   return;
+}
     LoadPage("edit-appointment.html");
     $.ajax({
       method: "get",
